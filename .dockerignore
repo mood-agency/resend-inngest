@@ -7,4 +7,3 @@ Dockerfile
 .env
 *.md
 dist
-src
