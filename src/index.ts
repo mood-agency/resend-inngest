@@ -14,22 +14,22 @@ app.use('/api/inngest', serve({ client: inngest, functions: [sendEmailViaResend]
 
 // Example route to trigger an email send event
 app.post('/trigger-email', async (req, res) => {
-  const { to, from, subject, html } = req.body;
+  const { to, from, subject, html, text } = req.body;
 
-  if (!to || !from || !subject || !html) {
-    return res.status(400).json({ message: 'Missing required fields: to, from, subject, html' });
+  if (!to || !from || !subject) {
+    return res.status(400).json({ message: 'Missing required fields: to, from, subject' });
+  }
+
+  if (!html && !text) {
+    return res.status(400).json({ message: 'Missing required field: html or text must be provided' });
   }
 
   try {
-    // Send an event to Inngest
+    // Send an event to Inngest using the entire request body as event data
+    // This allows all EmailSendData properties to be passed through
     await inngest.send({
       name: 'email/send', // This is the event name our function listens to
-      data: {
-        to,
-        from,
-        subject,
-        html,
-      },
+      data: req.body,     // Pass the whole body
     });
     res.status(202).json({ message: 'Email sending event accepted by Inngest.' });
   } catch (error) {

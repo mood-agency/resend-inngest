@@ -75,7 +75,9 @@ For local development, the Inngest Dev Server is highly recommended. It allows y
 
 ## Triggering an Email
 
-Once the server is running (either with `npm start` or `npm run dev`), you can trigger an email by sending a POST request to the `/trigger-email` endpoint.
+Once the server is running (either with `npm start` or `npm run dev`), you can trigger an email by sending a POST request to the `/trigger-email` endpoint. The event payload now supports a wider range of parameters from Resend's API, including `text` content, `cc`, `bcc`, `reply_to`, `headers`, `attachments` (as string content or path), and `tags`.
+
+Below is an example using `curl` with some of these optional parameters. Remember that either `html` or `text` content (or both) is required.
 
 Using `curl`:
 ```bash
@@ -84,14 +86,22 @@ curl -X POST http://localhost:3000/trigger-email \
 -d '{
   "to": "recipient@example.com", 
   "from": "Your Name <sender@yourdomain.com>", 
-  "subject": "Test Email via Inngest & Resend", 
-  "html": "<h1>Hello from Inngest!</h1><p>This email was rate-limited by Inngest.</p>"
+  "subject": "Test Email via Inngest & Resend (with more params)", 
+  "html": "<h1>Hello from Inngest!</h1><p>This email was rate-limited by Inngest and includes more parameters.</p>",
+  "text": "Hello from Inngest! This email was rate-limited by Inngest and includes more parameters.",
+  "cc": ["cc.recipient1@example.com", "cc.recipient2@example.com"],
+  "bcc": "bcc.recipient@example.com",
+  "reply_to": "replies@yourdomain.com",
+  "tags": [
+    { "name": "category", "value": "transactional" },
+    { "name": "customer-id", "value": "12345" }
+  ]
 }'
 ```
 
 Replace `recipient@example.com` with an actual email address you can check, and `sender@yourdomain.com` with a domain you've verified with Resend.
 
-If you are using the Inngest Dev Server, you can also trigger the `email/send` event directly from its UI.
+If you are using the Inngest Dev Server, you can also trigger the `email/send` event directly from its UI, providing the JSON payload with the desired parameters.
 
 ## How it Works
 
