@@ -12,9 +12,16 @@ export const sendEmailViaResend = inngest.createFunction(
   { 
     id: "send-email-via-resend", 
     name: "Send Email via Resend",
-    // Limit concurrency to 2 calls at any one time
-    concurrency: {
-      limit: 2,
+    // Previous concurrency limit (commented out):
+    // concurrency: {
+    //   limit: 2,
+    // }
+
+    // Explicit rate limit for more precise control
+    rateLimit: {
+      key: "resend-api", // A key to identify this rate limit (can be any string, ensure it's a simple string not a JSON string)
+      limit: 2,        // Allow 2 executions
+      period: "1s",    // Per 1 second period
     }
   },
   { event: "email/send" }, // This is the event name that will trigger this function

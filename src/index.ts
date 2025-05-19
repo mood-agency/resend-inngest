@@ -35,7 +35,7 @@ app.post('/trigger-email', async (req, res) => {
   } catch (error) {
     console.error('Error sending event to Inngest:', error);
     res.status(500).json({ message: 'Failed to send event to Inngest' });
-  }
+  } 
 });
 
 const port = process.env.PORT || 3000;
